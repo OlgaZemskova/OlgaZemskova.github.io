@@ -4,9 +4,11 @@ getwd()
 #Устанавливаем пакеты
 install.packages("tidyverse")
 install.packages("rnoaa")
+install.packages("lubridate")
 #Подключаем пакеты
 library(tidyverse)
 library(rnoaa)
+library(lubridate)
 #Скачиваем список метеостанций
 station_data = ghcnd_stations()
 #Cохраняем результат
@@ -23,7 +25,7 @@ summary (novosibirsk_id)
 #Создаем таблицу всех метеостанций вокруг Новосибирска, выбрав целиком первый объект из списка
 novosibirsk_table = novosibirsk_around[[1]] 
 summary (novosibirsk_table)
-#Т.к. по заданию не нужно отфильтровывать станции по расстоянию, то мф формируем список необходимых станций и смотрим, что он содержит
+#Т.к. по заданию не нужно отфильтровывать станции по расстоянию, то мы формируем список необходимых станций и смотрим, что он содержит
 novosibirsk_stations=novosibirsk_table
 str(novosibirsk_table)
 novosibirsk_stations$id
@@ -52,8 +54,9 @@ all_novosibirsk_meteodata=bind_rows(all_novosibirsk_meteodata, all_i  %>%
 }
 #Записываем полученные результаты
 write.csv(all_novosibirsk_meteodata,"all_novosibirsk_meteodata.csv")
+#Смотрим как выглядят наши данные сгруппированные по месяцу, году и сумме активных температур
 all_novosibirsk_meteodata
-#Создание необходимых векторов для рассчёта Р:
+#Создание необходимых констант для рассчёта:
 afi=c(0.00,0.00,0.00,32.11, 26.31,25.64,23.20,18.73,16.30,13.83,0.00,0.00)
 bfi=c(0.00, 0.00, 0.00, 11.30, 9.26, 9.03,8.16, 6.59, 5.73, 4.87, 0.00, 0.00)
 dfi=c(0.00,0.00, 0.00, 0.33, 1.00, 1.00, 1.00, 0.32, 0.00, 0.00, 0.00, 0.00)
@@ -65,8 +68,8 @@ Qj=1600
 Lj=2.2
 #Стандартная влажность культуры:
 Ej=25
-#Сохранение изменений таблицы в векторе clean_data:
-clean_data = all_novosibirsk_meteodata %>%
+#Сохранение изменений таблицы в векторе now:
+now = all_novosibirsk_meteodata %>%
   group_by(month) %>%
   #Рассчёт месячного d и cуммы активных температур для каждой станции:
   summarise(s = mean(sum, na.rm = TRUE)) %>%
@@ -76,5 +79,5 @@ clean_data = all_novosibirsk_meteodata %>%
   #Рассчёт урожайности для каждого месяца:
   mutate (fert = ((a + b * 1.0 * s) * d * Kf) / (Qj * Lj * (100-Ej)) )
 #Урожайность пшеницы с 2010 по 2013 год в Новосибирской области составила (ц/га):
-Yield = sum(clean_data$fert)
+Yield = sum(now$fert)
 Yield
