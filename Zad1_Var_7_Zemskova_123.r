@@ -41,7 +41,7 @@ for(i in 1:25)
   print(novosibirsk_id)
   #Выберем нужные свойства 
 all_i = meteo_tidy_ghcnd(stationid = novosibirsk_table$id [i])
-all_i=all_i[,c("id","date","tmax","tmin")]
+all_i=all_i[,c("id","date","tavg")]
 #Соединяем данные, полученные на предыдущих и данном этапах цикла
 all_novosibirsk_meteodata=rbind (all_novosibirsk_meteodata, all_i)
 }
@@ -72,7 +72,7 @@ summary(years_novosibirsk_meteodata)
 alldays=group_by(years_novosibirsk_meteodata,id,year,month)
 #Просуммируем температуру по этим группам с помощью sum
 sumT_alldays_novosibirsk=summarize(alldays,tsum=sum(tavg))
-#Максимальная суммарная температура за месяц 701,5, то есть 701,5/30=23,4, что разумно
+#Максимальная суммарная температура за месяц 732.90, то есть 732.90/30=24,43, что разумно
 summary(sumT_alldays_novosibirsk)
 #Сгруппируем данные по месяцам
 groups_novosibirsk_months=group_by(sumT_alldays_novosibirsk,month)
@@ -101,4 +101,4 @@ sumT_months=mutate(sumT_months,Fi=afi+bfi*y*St)
 sumT_months=mutate (sumT_months, Yi = ((Fi * di) * Kf) / (Qj * Lj * (100-Ej)) )
 #Расчитываем урожай как сумму по месяцам:
 Yield = sum(sumT_months$Yi); Yield
-#Урожайность пшеницы в период с 2010 по 2013 год в Новосибирской области составила 11.2261 ц/га, данная цифра разумна
+#Урожайность пшеницы в период с 2010 по 2013 год в Новосибирской области составила 15.3904 ц/га, данная цифра разумна
