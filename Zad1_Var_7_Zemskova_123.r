@@ -45,7 +45,6 @@ all_i=all_i[,c("id","date","tmax","tmin")]
 #Соединяем данные, полученные на предыдущих и данном этапах цикла
 all_novosibirsk_meteodata=rbind (all_novosibirsk_meteodata, all_i)
 }
-all_novosibirsk_meteodata=mutate(all_novosibirsk_meteodata,tavg=(all_novosibirsk_meteodata$tmax+all_novosibirsk_meteodata$tmin)/2)
 #Записываем полученные результаты
 write.csv(all_novosibirsk_meteodata,"all_novosibirsk_meteodata.csv")
 #Cчитываем данные из файла
